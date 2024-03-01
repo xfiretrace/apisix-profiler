@@ -167,6 +167,7 @@ static void print_fold_user_stack_with_lua(const lua_stack_backtrace *lua_bt, co
 {
     const struct sym *sym = NULL;
     int lua_bt_count = lua_bt->size() - 1;
+    printf(" print_fold_user_stack_with_lua lua_bt_count %d  ",lua_bt_count);
     for (int j = nr_uip - 1; j >= 0; j--)
     {
         sym = syms__map_addr(syms, uip[j]);
@@ -268,6 +269,8 @@ void print_stack_trace(struct ksyms *ksyms, struct syms_cache *syms_cache,
                 syms = syms_cache__get_syms(syms_cache, k->pid);
             }
             int stack_level = lua_bt_map.get_lua_stack_backtrace(k->user_stack_id, &lua_bt);
+
+            printf(" print_stack_trace k->user_stack_id %d stack_level # %d",k->user_stack_id, stack_level);
             if (env.lua_user_stacks_only && env.folded)
             {
                 if (stack_level <= 0)
@@ -288,6 +291,8 @@ void print_stack_trace(struct ksyms *ksyms, struct syms_cache *syms_cache,
                 while (nr_kip < env.perf_max_stack_depth && kip[nr_kip])
                     nr_kip++;
             }
+            printf(" print_stack_trace k->kern_stack_id %d nr_kip # %d \n",k->kern_stack_id, nr_kip);
+            // continue;
         }
 
         if (env.folded)
@@ -326,8 +331,10 @@ void print_stack_trace(struct ksyms *ksyms, struct syms_cache *syms_cache,
                     printf(";[Missed Kernel Stack]");
                 for (std::size_t j = nr_kip - 1; j >= 0; j--)
                 {
-                    ksym = ksyms__map_addr(ksyms, kip[j]);
-                    printf(";%s", ksym ? ksym->name : "[unknown]");
+                    printf(" ksyms__map_addr kip[j] %ld \n ", kip[j]);                    
+                    ksym = ksyms__map_addr(ksyms, 0);
+                    // printf(";%s", ksym ? ksym->name : "[unknown]");
+                    // printf(" ksyms__map_addr kip[j] %ld \n ", kip[j]);
                 }
             }
             printf(" %lld\n", v);
@@ -341,6 +348,7 @@ void print_stack_trace(struct ksyms *ksyms, struct syms_cache *syms_cache,
                     printf("    [Missed Kernel Stack]\n");
                 for (std::size_t j = 0; j < nr_kip; j++)
                 {
+                    printf(" ksyms__map_addr kip[j] %ld \n ", kip[j]);     
                     ksym = ksyms__map_addr(ksyms, kip[j]);
                     if (ksym)
                         printf("    #%-2d 0x%lx %s+0x%lx\n", idx++, kip[j], ksym->name, kip[j] - ksym->addr);

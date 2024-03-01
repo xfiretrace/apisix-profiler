@@ -85,7 +85,7 @@ static inline int lua_get_funcdata(struct bpf_perf_event_data *ctx, cTValue *fra
 		if (!src)
 			return -1;
 		bpf_probe_read_user_str(eventp->name, sizeof(eventp->name), src);
-		bpf_printk("level= %d, fn_name=%s\n", level, eventp->name);
+		bpf_printk("level= %d, fn_name=%s user_stack_id=%d\n", level, eventp->name, eventp->user_stack_id);
 	}
 	else if (iscfunc(fn))
 	{

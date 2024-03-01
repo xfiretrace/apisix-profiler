@@ -8,6 +8,10 @@ void lua_stack_map::insert_lua_stack_map(const struct lua_stack_event *e)
         return;
     }
     auto it = map.find(e->user_stack_id);
+
+	printf(" insert_lua_stack_map # %d", e->user_stack_id);
+    printf(" insert_lua_stack_map # %s", e->name);
+
     if (it == map.end())
     {
         lua_stack_backtrace stack = {*e};

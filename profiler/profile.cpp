@@ -315,6 +315,8 @@ static int attach_lua_uprobes(struct profile_bpf *obj, struct bpf_link *links[])
 		}
 	}
 
+	fprintf(stderr, "testing: attach_lua_uprobes %s\n", lua_path);
+
 	links[0] = attach_lua_func(lua_path, "lua_resume", obj->progs.handle_entry_lua);
 	if (!links[0])
 	{
@@ -379,6 +381,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+
 	obj = profile_bpf__open();
 	if (!obj)
 	{
@@ -387,6 +390,7 @@ int main(int argc, char **argv)
 	}
 
 	/* initialize global data (filtering options) */
+	// less disable_lua_user_trace 
 	obj->rodata->targ_pid = env.pid;
 	obj->rodata->targ_tid = env.tid;
 	obj->rodata->user_stacks_only = env.user_stacks_only;
@@ -424,6 +428,8 @@ int main(int argc, char **argv)
 		// cannot found lua lib, so skip lua uprobe
 		env.disable_lua_user_trace = true;
 	}
+	// fprintf(stderr, "failed to open BPF object\n");
+	// goto cleanup;
 
 	pb = perf_buffer__new(bpf_map__fd(obj->maps.lua_event_output), PERF_BUFFER_PAGES,
 						  handle_lua_stack_event, handle_lua_stack_lost_events, NULL, NULL);
